@@ -30,5 +30,18 @@ namespaces.forEach((namespace) => {
 
     // send the namespace group info to client
     nsSocket.emit("nsRoomLoad", namespaces[0].rooms);
+
+    nsSocket.on("joinRoom", (roomToJoin, numberOfUsersCallback) => {
+      // deal with history.. once we have it
+
+      nsSocket.join(roomToJoin);
+      // Get a list of connected sockets in the namespace
+      io.of("/wiki")
+        .in(roomToJoin)
+        .clients((error, clients) => {
+          console.log(clients.length);
+          numberOfUsersCallback(clients.length);
+        });
+    });
   });
 });

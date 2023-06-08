@@ -1,5 +1,5 @@
 const socket = io("http://localhost:9000");
-
+let nsSocket = "";
 let namespaceDiv = document.querySelector(".namespaces");
 
 // listen for ns list which is a list of all the namespaces
@@ -17,5 +17,5 @@ socket.on("nsList", (nsData) => {
     });
   });
 
-  joinNameSpace("wiki");
+  joinNameSpace("/wiki");
 });

@@ -1,18 +1,18 @@
 function joinNameSpace(endpoint) {
   const messageForm = document.querySelector("#message-form");
   let roomList = document.querySelector(".room-list");
-  let nsSocket = io(`http://localhost:9000/${endpoint}`);
+  nsSocket = io(`http://localhost:9000${endpoint}`);
 
   nsSocket.on("nsRoomLoad", (nsRooms) => {
     roomList.innerHTML = "";
     nsRooms.forEach((room) => {
       let glyph;
       if (room.privateRoom) {
-        glyph = "lock";
+        glyph = `<i class="fa-solid fa-lock" style="color: #ffffff;"></i>`;
       } else {
-        glyph = "globe";
+        glyph = `<i class="fa-solid fa-globe" style="color: #ffffff;"></i>`;
       }
-      roomList.innerHTML += `<li class="room"><span class="glyphicon glyphicon-${glyph}"></span>${room.roomTitle}</li>`;
+      roomList.innerHTML += `<li class="room">${glyph} ${room.roomTitle}</li>`;
     });
     // Add a click listener to each node
     let roomNodes = document.getElementsByClassName("room");
@@ -21,6 +21,11 @@ function joinNameSpace(endpoint) {
         console.log(e.target.innerText);
       });
     });
+
+    // Automatically join a user to a room
+    const topRoom = document.querySelector(".room");
+    const topRoomName = topRoom.innerText;
+    joinRoom(topRoomName);
   });
 
   nsSocket.on("messageToClients", (msg) => {
