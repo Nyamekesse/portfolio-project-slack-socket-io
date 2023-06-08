@@ -34,19 +34,21 @@ namespaces.forEach((namespace) => {
     nsSocket.on("joinRoom", (roomToJoin, numberOfUsersCallback) => {
       nsSocket.join(roomToJoin);
 
-      // Get a list of connected sockets in the namespace
-      io.of("/wiki")
-        .in(roomToJoin)
-        .clients((error, clients) => {
-          console.log(clients.length);
-          numberOfUsersCallback(clients.length);
-        });
-
       // deal with history.. once we have it
       const nsRoom = namespaces[0].rooms.find((room) => {
         return room.roomTitle === roomToJoin;
       });
       nsSocket.emit("historyMessages", nsRoom.history);
+
+      // Get a list of connected sockets in the namespace
+      // push the total number of users to sockets connected to the room
+      io.of("/wiki")
+        .in(roomToJoin)
+        .clients((error, clients) => {
+          io.of("/wiki")
+            .in(roomToJoin)
+            .emit("updateNumberOfSockets", clients.length);
+        });
     });
     nsSocket.on("newMessageToServer", (msg) => {
       const fullMessage = {

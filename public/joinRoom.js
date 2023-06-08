@@ -18,4 +18,11 @@ function joinRoom(roomName) {
     });
     messageView.scrollTo(0, messageView.scrollHeight);
   });
+
+  nsSocket.on("updateNumberOfSockets", (updatedNumberOfMembers) => {
+    document.querySelector(
+      ".curr-room-num-users"
+    ).innerHTML = `<i class="fa-regular fa-user" style="color: #eef1f7;"></i></span> ${updatedNumberOfMembers}`;
+    document.querySelector(".curr-room-text").innerText = `${roomName}`;
+  });
 }
