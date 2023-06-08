@@ -1,7 +1,10 @@
 {
   "name": "slack",
   "version": "1.0.0",
-  "main": "index.js",
+  "scripts": {
+    "start": "node slack.js",
+    "build": "yarn install && yarn build"
+  },
   "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
