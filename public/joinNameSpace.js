@@ -29,14 +29,29 @@ function joinNameSpace(endpoint) {
   });
 
   nsSocket.on("messageToClients", (msg) => {
-    messageContainer = document.querySelector(
-      "#messages"
-    ).innerHTML += `<li>${msg.text}</li>`;
+    const message = updateDom(msg);
+    messageContainer = document.querySelector("#messages").innerHTML += message;
   });
 
   messageForm.addEventListener("submit", (event) => {
     event.preventDefault();
     userMessage = document.querySelector("#user-message").value;
-    socket.emit("newMessageToServer", { text: userMessage });
+    nsSocket.emit("newMessageToServer", { text: userMessage });
   });
+}
+
+function updateDom(messageObj) {
+  const convertedDate = new Date(messageObj.time).toLocaleString();
+  const HTMLLiteral = `
+    <li>
+        <div class="user-image">
+            <img src=${messageObj.avatar} />
+        </div>
+        <div class="user-message">
+            <div class="user-name-time">${messageObj.username} <span>${convertedDate}</span></div>
+            <div class="message-text">${messageObj.text}</div>
+        </div>
+    </li>`;
+
+  return HTMLLiteral;
 }

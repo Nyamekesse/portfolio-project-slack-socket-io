@@ -43,5 +43,18 @@ namespaces.forEach((namespace) => {
           numberOfUsersCallback(clients.length);
         });
     });
+    nsSocket.on("newMessageToServer", (msg) => {
+      const fullMessage = {
+        text: msg.text,
+        time: Date.now(),
+        username: "Eye",
+        avatar: "https://via.placeholder.com/30",
+      };
+
+      // forward the message to the room this socket is in
+
+      const roomTitle = Object.keys(nsSocket.rooms)[1];
+      io.of("/wiki").to(roomTitle).emit("messageToClients", fullMessage);
+    });
   });
 });
