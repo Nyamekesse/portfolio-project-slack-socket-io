@@ -31,7 +31,7 @@ Slack Clone is a simple real-time chat application that mimics the popular commu
 - Node.js
 - Express.js
 - Nodemon
-- HTML, CSS
+- HTML, CSS, JavaScript
 - Socket.io
 
 ## Contact
