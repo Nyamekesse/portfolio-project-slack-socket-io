@@ -12,7 +12,7 @@ function joinNameSpace(endpoint) {
       } else {
         glyph = `<i class="fa-solid fa-globe" style="color: #ffffff;"></i>`;
       }
-      roomList.innerHTML += `<li class="room">${glyph} ${room.roomTitle}</li>`;
+      roomList.innerHTML += `<div class="room-wrap">${glyph} <li class="room">${room.roomTitle}</li></div>`;
     });
     // Add a click listener to each node
     let roomNodes = document.getElementsByClassName("room");

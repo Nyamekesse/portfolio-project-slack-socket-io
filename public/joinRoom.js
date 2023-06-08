@@ -7,4 +7,15 @@ function joinRoom(roomName) {
       ".curr-room-num-users"
     ).innerHTML = `<i class="fa-regular fa-user" style="color: #eef1f7;"></i></span> ${newNumberOfMembers}`;
   });
+
+  nsSocket.on("historyMessages", (historyMessages) => {
+    const messageView = document.querySelector("#messages");
+    messageView.innerHTML = "";
+    historyMessages.forEach((message) => {
+      const newMessage = updateDom(message);
+      const currentMessages = messageView.innerHTML;
+      messageView.innerHTML = currentMessages + newMessage;
+    });
+    messageView.scrollTo(0, messageView.scrollHeight);
+  });
 }

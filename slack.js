@@ -32,9 +32,8 @@ namespaces.forEach((namespace) => {
     nsSocket.emit("nsRoomLoad", namespaces[0].rooms);
 
     nsSocket.on("joinRoom", (roomToJoin, numberOfUsersCallback) => {
-      // deal with history.. once we have it
-
       nsSocket.join(roomToJoin);
+
       // Get a list of connected sockets in the namespace
       io.of("/wiki")
         .in(roomToJoin)
@@ -42,6 +41,12 @@ namespaces.forEach((namespace) => {
           console.log(clients.length);
           numberOfUsersCallback(clients.length);
         });
+
+      // deal with history.. once we have it
+      const nsRoom = namespaces[0].rooms.find((room) => {
+        return room.roomTitle === roomToJoin;
+      });
+      nsSocket.emit("historyMessages", nsRoom.history);
     });
     nsSocket.on("newMessageToServer", (msg) => {
       const fullMessage = {
@@ -51,9 +56,15 @@ namespaces.forEach((namespace) => {
         avatar: "https://via.placeholder.com/30",
       };
 
-      // forward the message to the room this socket is in
-
+      // forward the message to the room of this socket is in
       const roomTitle = Object.keys(nsSocket.rooms)[1];
+
+      // find room object for the room
+      const nsRoom = namespaces[0].rooms.find(
+        (room) => room.roomTitle === roomTitle
+      );
+      nsRoom.addMessage(fullMessage);
+      console.log(nsRoom);
       io.of("/wiki").to(roomTitle).emit("messageToClients", fullMessage);
     });
   });
