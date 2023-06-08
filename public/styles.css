@@ -42,6 +42,11 @@ body {
   color: #fff;
 }
 
+.room-wrap {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
 .rooms {
   background: #3b4048;
   min-height: 100vh;
