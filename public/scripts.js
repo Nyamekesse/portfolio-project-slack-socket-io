@@ -1,7 +1,7 @@
 const username = prompt("What is your username?");
-
+const URL = "https://slack-clone-project.onrender.com";
 // const socket = io("http://localhost:9000");
-const socket = io(`https://slack-clone-project.onrender.com/`, {
+const socket = io(`${URL}`, {
   query: {
     username,
   },

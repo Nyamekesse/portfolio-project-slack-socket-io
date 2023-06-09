@@ -9,7 +9,7 @@ function joinNameSpace(endpoint) {
   }
   const messageForm = document.querySelector("#message-form");
   let roomList = document.querySelector(".room-list");
-  nsSocket = io(`http://localhost:9000${endpoint}`);
+  nsSocket = io(`${URL}${endpoint}`);
 
   nsSocket.on("nsRoomLoad", (nsRooms) => {
     roomList.innerHTML = "";
