@@ -1,14 +1,11 @@
 const express = require("express");
 const socketio = require("socket.io");
-
 const app = express();
-
-app.use(express.static(__dirname + "/public"));
-
 const expressServer = app.listen(9000);
 const io = socketio(expressServer);
-
 let namespaces = require("./data/namespace");
+
+app.use(express.static(__dirname + "/public"));
 
 io.on("connection", (socket) => {
   // build an array to send back with the image and endpoint for each namespace
@@ -26,29 +23,21 @@ io.on("connection", (socket) => {
 // loop through each namespace and listen for a connection
 namespaces.forEach((namespace) => {
   io.of(namespace.endpoint).on("connection", (nsSocket) => {
-    console.log(`${nsSocket.id} has joined ${namespace.endpoint}`);
-
     // send the namespace group info to client
-    nsSocket.emit("nsRoomLoad", namespaces[0].rooms);
+    nsSocket.emit("nsRoomLoad", namespace.rooms);
 
     nsSocket.on("joinRoom", (roomToJoin, numberOfUsersCallback) => {
+      const roomToLeave = Object.keys(nsSocket.rooms)[1];
+      nsSocket.leave(roomToLeave);
+      updateUsersInRoom(namespace, roomToLeave);
       nsSocket.join(roomToJoin);
 
       // deal with history.. once we have it
-      const nsRoom = namespaces[0].rooms.find((room) => {
+      const nsRoom = namespace.rooms.find((room) => {
         return room.roomTitle === roomToJoin;
       });
       nsSocket.emit("historyMessages", nsRoom.history);
-
-      // Get a list of connected sockets in the namespace
-      // push the total number of users to sockets connected to the room
-      io.of("/wiki")
-        .in(roomToJoin)
-        .clients((error, clients) => {
-          io.of("/wiki")
-            .in(roomToJoin)
-            .emit("updateNumberOfSockets", clients.length);
-        });
+      updateUsersInRoom(namespace, roomToJoin);
     });
     nsSocket.on("newMessageToServer", (msg) => {
       const fullMessage = {
@@ -62,12 +51,26 @@ namespaces.forEach((namespace) => {
       const roomTitle = Object.keys(nsSocket.rooms)[1];
 
       // find room object for the room
-      const nsRoom = namespaces[0].rooms.find(
+      const nsRoom = namespace.rooms.find(
         (room) => room.roomTitle === roomTitle
       );
       nsRoom.addMessage(fullMessage);
-      console.log(nsRoom);
-      io.of("/wiki").to(roomTitle).emit("messageToClients", fullMessage);
+
+      io.of(namespace.endpoint)
+        .to(roomTitle)
+        .emit("messageToClients", fullMessage);
     });
   });
 });
+
+function updateUsersInRoom(namespace, roomToJoin) {
+  // Get a list of connected sockets in the namespace
+  // push the total number of users to sockets connected to the room
+  io.of(namespace.endpoint)
+    .in(roomToJoin)
+    .clients((error, clients) => {
+      io.of(namespace.endpoint)
+        .in(roomToJoin)
+        .emit("updateNumberOfSockets", clients.length);
+    });
+}
