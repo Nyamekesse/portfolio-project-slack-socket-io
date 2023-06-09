@@ -1,20 +1,21 @@
 const username = prompt("What is your username?");
 const host = window.location.hostname;
 const protocol = window.location.protocol;
+let URL = "";
+let nsSocket = "";
+let namespaceDiv = document.querySelector(".namespaces");
+
 if (host.toLocaleLowerCase().includes("localhost")) {
-  URL = "http://localhost:9000";
+  URL = `${protocol}//${host}:9000`;
 } else {
-  // const URL = "https://slack-clone-project.onrender.com";
-  const URL = `${protocol}//${host}`;
+  URL = `${protocol}//${host}`;
 }
-// const socket = io("http://localhost:9000");
+
 const socket = io(`${URL}`, {
   query: {
     username,
   },
 });
-let nsSocket = "";
-let namespaceDiv = document.querySelector(".namespaces");
 
 // listen for ns list which is a list of all the namespaces
 socket.on("nsList", (nsData) => {
