@@ -1,7 +1,8 @@
 const express = require("express");
 const socketio = require("socket.io");
+const PORT = process.env.PORT || 9000;
 const app = express();
-const expressServer = app.listen(9000);
+const expressServer = app.listen(PORT);
 const io = socketio(expressServer);
 let namespaces = require("./data/namespace");
 
